@@ -3,7 +3,9 @@ import random
 
 import nodriver as uc
 
-from config import KEY_DELAY_MAX, KEY_DELAY_MIN
+from config import KEY_DELAY_MAX, KEY_DELAY_MIN, TYPING_DELAY_MAX, TYPING_DELAY_MIN
+
+SHIFT = 8
 
 KEYS = {
     "Tab": ("Tab", 9, None),
@@ -14,12 +16,21 @@ KEYS = {
 }
 
 
-async def press(tab, key, times=1):
+async def press(tab, key, times=1, modifiers=0):
     code, vk, text = KEYS[key]
     for _ in range(times):
         for type_ in ("keyDown", "keyUp"):
             await tab.send(uc.cdp.input_.dispatch_key_event(
-                type_=type_, key=key, code=code, windows_virtual_key_code=vk,
+                type_=type_, key=key, code=code, windows_virtual_key_code=vk, modifiers=modifiers,
                 text=text if type_ == "keyDown" else None,
             ))
         await asyncio.sleep(random.uniform(KEY_DELAY_MIN, KEY_DELAY_MAX))
+
+
+async def type_text(tab, text):
+    for i, line in enumerate(text.split("\n")):
+        if i:
+            await press(tab, "Enter", modifiers=SHIFT)
+        for char in line:
+            await tab.send(uc.cdp.input_.insert_text(text=char))
+            await asyncio.sleep(random.uniform(TYPING_DELAY_MIN, TYPING_DELAY_MAX))
