@@ -13,7 +13,7 @@ from navigation import close_chat, open_chat
 
 async def main():
     (browser, tab), _ = await asyncio.gather(start_whatsapp(), warm_up())
-    print("WhatsApp Web ready. Close the browser or press Ctrl+C to quit.")
+    print("WhatsApp Web pronto. Feche o navegador ou aperte Ctrl+C para sair.")
 
     while not browser.stopped:
         chats = await get_unread_chats(tab)
@@ -25,10 +25,10 @@ async def main():
                 pending = unanswered(messages)
                 question = to_text(pending)
                 answer = await reply(messages[:len(messages) - len(pending)], question)
-                print(f"Q: {question}\nA: {answer}\n")
+                print(f"P: {question}\nR: {answer}\n")
                 await close_chat(tab)
             except (RuntimeError, ConnectionError, ResponseError) as e:
-                print(f"Failed on {chat['name']}: {e}")
+                print(f"Falha em {chat['name']}: {e}")
         await asyncio.sleep(CHECK_INTERVAL)
 
 

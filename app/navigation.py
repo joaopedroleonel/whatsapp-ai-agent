@@ -19,17 +19,17 @@ async def open_chat(tab, chat):
         await press(tab, "Tab")
         state = await focus_state(tab, name)
     else:
-        raise RuntimeError("Could not reach the chat list with TAB")
+        raise RuntimeError("Não foi possível chegar na lista de conversas com TAB")
 
     for _ in range(MAX_ARROWS):
         if state["target"] is None:
-            raise RuntimeError(f"Chat not found in the list: {name}")
+            raise RuntimeError(f"Conversa não encontrada na lista: {name}")
         if state["focused"] == state["target"]:
             break
         await press(tab, "ArrowDown" if state["target"] > state["focused"] else "ArrowUp")
         state = await focus_state(tab, name)
     else:
-        raise RuntimeError(f"Could not reach chat with arrows: {name}")
+        raise RuntimeError(f"Não foi possível chegar na conversa com as setas: {name}")
 
     await press(tab, "Enter")
     for _ in range(int(OPEN_TIMEOUT * 4)):
@@ -38,7 +38,7 @@ async def open_chat(tab, chat):
             await asyncio.sleep(1)
             return
         await asyncio.sleep(0.25)
-    raise RuntimeError(f"Chat did not open: {name}")
+    raise RuntimeError(f"A conversa não abriu: {name}")
 
 
 async def close_chat(tab):
@@ -47,4 +47,4 @@ async def close_chat(tab):
             return
         await press(tab, "Escape")
         await asyncio.sleep(0.5)
-    raise RuntimeError("Chat did not close with Escape")
+    raise RuntimeError("A conversa não fechou com Esc")

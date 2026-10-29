@@ -33,7 +33,7 @@ async def chat(history_messages, question, **options):
 
 
 async def warm_up():
-    await chat([], "Oi", num_predict=1)
+    await client.chat(model=OLLAMA_MODEL, messages=[], options=OPTIONS, keep_alive=OLLAMA_KEEP_ALIVE)
 
 
 async def reply(history, question):

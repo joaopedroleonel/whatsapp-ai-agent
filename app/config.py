@@ -10,7 +10,7 @@ load_dotenv(ROOT / ".env")
 def require(name):
     value = os.getenv(name, "").strip()
     if not value:
-        raise SystemExit(f"Missing {name} in .env (see .env.example)")
+        raise SystemExit(f"Faltando {name} no .env (veja o .env.example)")
     return value
 
 
