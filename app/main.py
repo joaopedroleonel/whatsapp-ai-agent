@@ -6,8 +6,9 @@ from ollama import ResponseError
 from ai import reply, warm_up
 from browser import start_whatsapp
 from chat_list import get_unread_chats
-from config import CHECK_INTERVAL
+from config import CHECK_INTERVAL, SEND_WAIT
 from conversation import read_messages, to_text, unanswered
+from keyboard import press, type_text
 from navigation import close_chat, open_chat
 
 
@@ -25,7 +26,10 @@ async def main():
                 pending = unanswered(messages)
                 question = to_text(pending)
                 answer = await reply(messages[:len(messages) - len(pending)], question)
-                print(f"P: {question}\nR: {answer}\n")
+                if answer:
+                    await type_text(tab, answer)
+                    await press(tab, "Enter")
+                    await asyncio.sleep(SEND_WAIT)
                 await close_chat(tab)
             except (RuntimeError, ConnectionError, ResponseError) as e:
                 print(f"Falha em {chat['name']}: {e}")
