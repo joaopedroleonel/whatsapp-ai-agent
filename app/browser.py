@@ -3,14 +3,14 @@ from pathlib import Path
 
 import nodriver as uc
 
-from config import CHROME_PROFILE_DIR, LOGIN_TIMEOUT, WHATSAPP_URL
+from config import BROWSER_PATH, BROWSER_PROFILE_DIR, LOGIN_TIMEOUT, WHATSAPP_URL
 
 JS_DIR = Path(__file__).parent / "js"
 CHAT_LIST_ITEM = '[data-testid="cell-frame-title"]'
 
 
 async def start_whatsapp():
-    browser = await uc.start(user_data_dir=str(CHROME_PROFILE_DIR))
+    browser = await uc.start(user_data_dir=str(BROWSER_PROFILE_DIR), browser_executable_path=BROWSER_PATH)
     tab = await browser.get(WHATSAPP_URL)
     print("Aguardando o WhatsApp Web carregar (leia o QR code se for pedido)...")
     await tab.select(CHAT_LIST_ITEM, timeout=LOGIN_TIMEOUT)

@@ -1,41 +1,32 @@
 from pathlib import Path
 
-from ollama import AsyncClient
+from openai import AsyncOpenAI
 
-from config import (OLLAMA_HOST, OLLAMA_KEEP_ALIVE, OLLAMA_MODEL, OLLAMA_NUM_BATCH,
-                    OLLAMA_NUM_CTX, OLLAMA_NUM_PREDICT, OLLAMA_TEMPERATURE)
+from config import (AI_API_KEY, AI_BASE_URL, AI_EXTRA_BODY, AI_HISTORY, AI_MAX_TOKENS, AI_MODEL,
+                    AI_TEMPERATURE, AI_TIMEOUT)
 
 INSTRUCTIONS = (Path(__file__).parent / "prompts" / "instructions.md").read_text(encoding="utf-8")
-client = AsyncClient(host=OLLAMA_HOST)
-OPTIONS = {
-    "temperature": OLLAMA_TEMPERATURE,
-    "num_ctx": OLLAMA_NUM_CTX,
-    "num_batch": OLLAMA_NUM_BATCH,
-    "num_predict": OLLAMA_NUM_PREDICT,
-}
+client = AsyncOpenAI(base_url=AI_BASE_URL, api_key=AI_API_KEY, timeout=AI_TIMEOUT)
 
 
-def history_text(messages):
-    return "\n".join(f"{'Atendente' if m['fromMe'] else 'Cliente'}: {m['text']}" for m in messages)
+def build_messages(history, pending):
+    messages = [{"role": "system", "content": INSTRUCTIONS}]
+    turns = [("assistant" if m["fromMe"] else "user", m["text"]) for m in history] if AI_HISTORY else []
+    turns += [("user", m["text"]) for m in pending]
+    for role, text in turns:
+        if messages[-1]["role"] == role:
+            messages[-1]["content"] += f"\n{text}"
+        else:
+            messages.append({"role": role, "content": text})
+    return messages
 
 
-async def chat(history_messages, question, **options):
-    return await client.chat(
-        model=OLLAMA_MODEL,
-        messages=[
-            {"role": "system", "content": INSTRUCTIONS.replace("{history}", history_text(history_messages))},
-            {"role": "user", "content": question},
-        ],
-        think=False,
-        options={**OPTIONS, **options},
-        keep_alive=OLLAMA_KEEP_ALIVE,
+async def reply(history, pending):
+    response = await client.chat.completions.create(
+        model=AI_MODEL,
+        messages=build_messages(history, pending),
+        temperature=AI_TEMPERATURE,
+        max_tokens=AI_MAX_TOKENS,
+        extra_body=AI_EXTRA_BODY,
     )
-
-
-async def warm_up():
-    await client.chat(model=OLLAMA_MODEL, messages=[], options=OPTIONS, keep_alive=OLLAMA_KEEP_ALIVE)
-
-
-async def reply(history, question):
-    response = await chat(history, question)
-    return response.message.content.strip()
+    return (response.choices[0].message.content or "").strip()
