@@ -1,11 +1,15 @@
 import asyncio
 import random
+from time import perf_counter
 
 import nodriver as uc
 
 from config import KEY_DELAY_MAX, KEY_DELAY_MIN, TYPING_DELAY_MAX, TYPING_DELAY_MIN
+from log import elapsed_ms, get_logger
 
 SHIFT = 8
+
+log = get_logger("keyboard")
 
 KEYS = {
     "Tab": ("Tab", 9, None),
@@ -28,9 +32,11 @@ async def press(tab, key, times=1, modifiers=0):
 
 
 async def type_text(tab, text):
+    start = perf_counter()
     for i, line in enumerate(text.split("\n")):
         if i:
             await press(tab, "Enter", modifiers=SHIFT)
         for char in line:
             await tab.send(uc.cdp.input_.insert_text(text=char))
             await asyncio.sleep(random.uniform(TYPING_DELAY_MIN, TYPING_DELAY_MAX))
+    log.debug("Texto digitado", chars=len(text), ms=elapsed_ms(start))

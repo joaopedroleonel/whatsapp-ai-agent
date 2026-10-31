@@ -133,6 +133,23 @@ Na primeira execução, leia o QR code com o celular (WhatsApp > Aparelhos conec
 | `MAX_TABS` / `MAX_ARROWS` | `60` / `50` | Limite de TABs e setas para chegar na conversa |
 | `KEY_DELAY_MIN` / `KEY_DELAY_MAX` | `0.25` / `0.6` | Pausa entre teclas de navegação (s) |
 | `TYPING_DELAY_MIN` / `TYPING_DELAY_MAX` | `0.03` / `0.1` | Pausa entre caracteres digitados (s) |
+| `LOG_LEVEL` | `INFO` | Nível dos logs: `DEBUG`, `INFO`, `WARNING` ou `ERROR` |
+
+## Logs
+
+Os logs saem no terminal, uma linha por evento, com campos `chave=valor`:
+
+```
+2026-10-30 14:03:12 INFO    main         Atendimento iniciado     chat="Maria Silva" id=7f3a nao_lidas=2
+2026-10-30 14:03:14 INFO    navigation   Conversa aberta          chat="Maria Silva" id=7f3a tabs=3 setas=4 ms=1812
+2026-10-30 14:03:16 INFO    ai           Resposta gerada          chat="Maria Silva" id=7f3a ms=2140 chars=213 fim=stop tokens_in=812 tokens_out=64
+2026-10-30 14:03:21 INFO    main         Atendimento concluído    chat="Maria Silva" id=7f3a pendentes=2 chars_enviados=213 ms=9412
+```
+
+- Todas as linhas de um mesmo atendimento têm o mesmo `chat` e `id`, o que facilita filtrar (`findstr id=7f3a` / `grep id=7f3a`).
+- `ms` é a duração da etapa. `tokens_in`/`tokens_out` vêm do provedor, quando ele informa. `fim=length` indica resposta cortada pelo `AI_MAX_TOKENS`, e gera um aviso.
+- Em `INFO` só aparecem metadados. O texto das mensagens dos clientes e das respostas da IA aparece **só em `DEBUG`**, junto com as execuções de JS e as verificações periódicas. Cuidado ao guardar ou compartilhar logs em `DEBUG`: são dados pessoais (LGPD).
+- As cores são desligadas quando a saída não é um terminal ou quando `NO_COLOR` está definido. Para salvar em arquivo: `python app/main.py 2> agent.log`.
 
 ## Estrutura
 
@@ -140,6 +157,7 @@ Na primeira execução, leia o QR code com o celular (WhatsApp > Aparelhos conec
 app/
 ├── main.py           # loop principal
 ├── config.py         # leitura do .env
+├── log.py            # formato dos logs e contexto do atendimento
 ├── browser.py        # abre o WhatsApp Web e executa JS na página
 ├── chat_list.py      # conversas com mensagens não lidas
 ├── navigation.py     # abre e fecha conversas pelo teclado

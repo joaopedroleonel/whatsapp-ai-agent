@@ -44,3 +44,7 @@ KEY_DELAY_MIN = float(optional("KEY_DELAY_MIN", "0.25"))
 KEY_DELAY_MAX = float(optional("KEY_DELAY_MAX", "0.6"))
 TYPING_DELAY_MIN = float(optional("TYPING_DELAY_MIN", "0.03"))
 TYPING_DELAY_MAX = float(optional("TYPING_DELAY_MAX", "0.1"))
+
+LOG_LEVEL = optional("LOG_LEVEL", "INFO").upper()
+if LOG_LEVEL not in ("DEBUG", "INFO", "WARNING", "ERROR"):
+    raise SystemExit(f"LOG_LEVEL inválido: {LOG_LEVEL} (use DEBUG, INFO, WARNING ou ERROR)")
