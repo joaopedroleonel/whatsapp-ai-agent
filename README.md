@@ -140,14 +140,14 @@ Na primeira execução, leia o QR code com o celular (WhatsApp > Aparelhos conec
 Os logs saem no terminal, uma linha por evento, com campos `chave=valor`:
 
 ```
-2026-10-30 14:03:12 INFO    main         Atendimento iniciado     chat="Maria Silva" id=7f3a nao_lidas=2
-2026-10-30 14:03:14 INFO    navigation   Conversa aberta          chat="Maria Silva" id=7f3a tabs=3 setas=4 ms=1812
-2026-10-30 14:03:16 INFO    ai           Resposta gerada          chat="Maria Silva" id=7f3a ms=2140 chars=213 fim=stop tokens_in=812 tokens_out=64
-2026-10-30 14:03:21 INFO    main         Atendimento concluído    chat="Maria Silva" id=7f3a pendentes=2 chars_enviados=213 ms=9412
+2026-10-30 14:03:12 INFO    main         Chat started             chat="Maria Silva" id=7f3a unread=2
+2026-10-30 14:03:14 INFO    navigation   Chat opened              chat="Maria Silva" id=7f3a tabs=3 arrows=4 ms=1812
+2026-10-30 14:03:16 INFO    ai           Reply generated          chat="Maria Silva" id=7f3a ms=2140 chars=213 finish=stop tokens_in=812 tokens_out=64
+2026-10-30 14:03:21 INFO    main         Chat finished            chat="Maria Silva" id=7f3a pending=2 chars_sent=213 ms=9412
 ```
 
 - Todas as linhas de um mesmo atendimento têm o mesmo `chat` e `id`, o que facilita filtrar (`findstr id=7f3a` / `grep id=7f3a`).
-- `ms` é a duração da etapa. `tokens_in`/`tokens_out` vêm do provedor, quando ele informa. `fim=length` indica resposta cortada pelo `AI_MAX_TOKENS`, e gera um aviso.
+- `ms` é a duração da etapa. `tokens_in`/`tokens_out` vêm do provedor, quando ele informa. `finish=length` indica resposta cortada pelo `AI_MAX_TOKENS`, e gera um aviso.
 - Em `INFO` só aparecem metadados. O texto das mensagens dos clientes e das respostas da IA aparece **só em `DEBUG`**, junto com as execuções de JS e as verificações periódicas. Cuidado ao guardar ou compartilhar logs em `DEBUG`: são dados pessoais (LGPD).
 - As cores são desligadas quando a saída não é um terminal ou quando `NO_COLOR` está definido. Para salvar em arquivo: `python app/main.py 2> agent.log`.
 

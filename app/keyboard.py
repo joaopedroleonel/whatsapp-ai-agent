@@ -39,4 +39,4 @@ async def type_text(tab, text):
         for char in line:
             await tab.send(uc.cdp.input_.insert_text(text=char))
             await asyncio.sleep(random.uniform(TYPING_DELAY_MIN, TYPING_DELAY_MAX))
-    log.debug("Texto digitado", chars=len(text), ms=elapsed_ms(start))
+    log.debug("Text typed", chars=len(text), ms=elapsed_ms(start))

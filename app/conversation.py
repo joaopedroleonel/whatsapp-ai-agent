@@ -11,10 +11,10 @@ async def read_messages(tab):
 def unanswered(messages):
     last_mine = max((i for i, m in enumerate(messages) if m["fromMe"]), default=-1)
     pending = messages[last_mine + 1:]
-    log.debug("Mensagens lidas", mensagens=len(messages), pendentes=len(pending))
+    log.debug("Messages read", messages=len(messages), pending=len(pending))
     for m in pending:
         if m["text"]:
-            log.debug("Mensagem pendente", hora=m["time"], texto=m["text"])
+            log.debug("Pending message", time=m["time"], text=m["text"])
         else:
-            log.warning("Mensagem sem texto", hora=m["time"], detalhe="provavelmente mídia; vai vazia para a IA")
+            log.warning("Message without text", time=m["time"], detail="probably media; sent empty to the AI")
     return pending

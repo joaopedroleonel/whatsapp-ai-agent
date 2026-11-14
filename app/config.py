@@ -11,7 +11,7 @@ load_dotenv(ROOT / ".env")
 def require(name):
     value = os.getenv(name, "").strip()
     if not value:
-        raise SystemExit(f"Faltando {name} no .env (veja o .env.example)")
+        raise SystemExit(f"Missing {name} in .env (see .env.example)")
     return value
 
 
@@ -32,7 +32,7 @@ WHATSAPP_URL = optional("WHATSAPP_URL", "https://web.whatsapp.com")
 BROWSER_PROFILE_DIR = ROOT / optional("BROWSER_PROFILE_DIR", "app/browser-profile")
 BROWSER_PATH = optional("BROWSER_PATH", None)
 if BROWSER_PATH and not Path(BROWSER_PATH).is_file():
-    raise SystemExit(f"Navegador não encontrado em BROWSER_PATH: {BROWSER_PATH}")
+    raise SystemExit(f"Browser not found at BROWSER_PATH: {BROWSER_PATH}")
 LOGIN_TIMEOUT = float(optional("LOGIN_TIMEOUT", "300"))
 CHECK_INTERVAL = float(optional("CHECK_INTERVAL", "5"))
 OPEN_TIMEOUT = float(optional("OPEN_TIMEOUT", "5"))
@@ -47,4 +47,4 @@ TYPING_DELAY_MAX = float(optional("TYPING_DELAY_MAX", "0.1"))
 
 LOG_LEVEL = optional("LOG_LEVEL", "INFO").upper()
 if LOG_LEVEL not in ("DEBUG", "INFO", "WARNING", "ERROR"):
-    raise SystemExit(f"LOG_LEVEL inválido: {LOG_LEVEL} (use DEBUG, INFO, WARNING ou ERROR)")
+    raise SystemExit(f"Invalid LOG_LEVEL: {LOG_LEVEL} (use DEBUG, INFO, WARNING or ERROR)")

@@ -14,13 +14,13 @@ log = get_logger("browser")
 
 
 async def start_whatsapp():
-    log.info("Abrindo navegador", navegador=BROWSER_PATH or "chrome automático", perfil=BROWSER_PROFILE_DIR)
+    log.info("Opening browser", browser=BROWSER_PATH or "auto-detected chrome", profile=BROWSER_PROFILE_DIR)
     browser = await uc.start(user_data_dir=str(BROWSER_PROFILE_DIR), browser_executable_path=BROWSER_PATH)
     tab = await browser.get(WHATSAPP_URL)
-    log.info("Aguardando o WhatsApp Web", dica="leia o QR code se for pedido", timeout_s=LOGIN_TIMEOUT)
+    log.info("Waiting for WhatsApp Web", hint="scan the QR code if prompted", timeout_s=LOGIN_TIMEOUT)
     start = perf_counter()
     await tab.select(CHAT_LIST_ITEM, timeout=LOGIN_TIMEOUT)
-    log.info("WhatsApp Web carregado", ms=elapsed_ms(start))
+    log.info("WhatsApp Web loaded", ms=elapsed_ms(start))
     return browser, tab
 
 
@@ -33,6 +33,6 @@ async def run_js(tab, name, **args):
     wrapped = f"(() => {{ const ARGS = {json.dumps(args)};\n{load_js(name)}\n}})()"
     result = await tab.evaluate(wrapped, return_by_value=True)
     if not isinstance(result, str):
-        raise RuntimeError(f"Falha ao executar {name}: {result}")
-    log.debug("JS executado", script=name, ms=elapsed_ms(start))
+        raise RuntimeError(f"Failed to run {name}: {result}")
+    log.debug("JS executed", script=name, ms=elapsed_ms(start))
     return json.loads(result)

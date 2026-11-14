@@ -27,7 +27,7 @@ async def handle_chat(tab, chat):
         await press(tab, "Enter")
         await asyncio.sleep(SEND_WAIT)
     else:
-        log.info("Nada enviado", motivo="resposta vazia")
+        log.info("Nothing sent", reason="empty reply")
     await close_chat(tab)
     return len(pending), len(text)
 
@@ -35,13 +35,13 @@ async def handle_chat(tab, chat):
 async def attend(tab, chat):
     with chat_context(chat["name"]):
         start = perf_counter()
-        log.info("Atendimento iniciado", nao_lidas=chat["unread"])
+        log.info("Chat started", unread=chat["unread"])
         try:
             pending, sent = await handle_chat(tab, chat)
         except (RuntimeError, APIError) as e:
-            log.error("Atendimento falhou", erro=type(e).__name__, detalhe=str(e), ms=elapsed_ms(start))
+            log.error("Chat failed", error=type(e).__name__, detail=str(e), ms=elapsed_ms(start))
         else:
-            log.info("Atendimento concluído", pendentes=pending, chars_enviados=sent, ms=elapsed_ms(start))
+            log.info("Chat finished", pending=pending, chars_sent=sent, ms=elapsed_ms(start))
 
 
 async def stop_browser(browser):
@@ -54,22 +54,22 @@ async def stop_browser(browser):
 
 async def main():
     setup_logging()
-    log.info("Iniciando", modelo=AI_MODEL, api=urlparse(AI_BASE_URL).netloc, historico=AI_HISTORY, intervalo_s=CHECK_INTERVAL)
+    log.info("Starting", model=AI_MODEL, api=urlparse(AI_BASE_URL).netloc, history=AI_HISTORY, interval_s=CHECK_INTERVAL)
     browser, tab = await start_whatsapp()
-    log.info("WhatsApp Web pronto", dica="feche o navegador ou aperte Ctrl+C para sair")
+    log.info("WhatsApp Web ready", hint="close the browser or press Ctrl+C to exit")
     try:
         while not browser.stopped:
             chats = await get_unread_chats(tab)
-            log.debug("Verificação", nao_lidas=len(chats))
+            log.debug("Check", unread=len(chats))
             if chats:
-                log.info("Conversas não lidas", total=len(chats), fila=[c["name"] for c in chats])
+                log.info("Unread chats", total=len(chats), queue=[c["name"] for c in chats])
                 await attend(tab, chats[0])
             await asyncio.sleep(CHECK_INTERVAL)
     except Exception:
-        log.exception("Erro fatal")
+        log.exception("Fatal error")
         raise SystemExit(1)
     finally:
-        log.info("Encerrando")
+        log.info("Shutting down")
         await stop_browser(browser)
 
 

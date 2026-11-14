@@ -18,7 +18,7 @@ _chat = ContextVar("chat", default=None)
 
 
 class FieldsAdapter(logging.LoggerAdapter):
-    """Aceita campos como kwargs: log.info("Conversa aberta", tabs=3, ms=812)."""
+    """Aceita campos como kwargs: log.info("Chat opened", tabs=3, ms=812)."""
 
     def process(self, msg, kwargs):
         fields = {**(_chat.get() or {}), **{k: kwargs.pop(k) for k in list(kwargs) if k not in LOGGING_KWARGS}}

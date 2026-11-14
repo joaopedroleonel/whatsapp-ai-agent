@@ -26,7 +26,7 @@ def build_messages(history, pending):
 
 async def reply(history, pending):
     messages = build_messages(history, pending)
-    log.debug("Chamando a IA", mensagens_enviadas=len(messages))
+    log.debug("Calling AI", messages_sent=len(messages))
     start = perf_counter()
     response = await client.chat.completions.create(
         model=AI_MODEL,
@@ -39,12 +39,12 @@ async def reply(history, pending):
     answer = (choice.message.content or "").strip()
     usage = response.usage
     log.info(
-        "Resposta gerada", ms=elapsed_ms(start), chars=len(answer), fim=choice.finish_reason,
+        "Reply generated", ms=elapsed_ms(start), chars=len(answer), finish=choice.finish_reason,
         tokens_in=usage.prompt_tokens if usage else None, tokens_out=usage.completion_tokens if usage else None,
     )
     if choice.finish_reason == "length":
-        log.warning("Resposta cortada", detalhe=f"atingiu AI_MAX_TOKENS={AI_MAX_TOKENS}")
+        log.warning("Reply truncated", detail=f"reached AI_MAX_TOKENS={AI_MAX_TOKENS}")
     if not answer:
-        log.warning("Resposta vazia da IA")
-    log.debug("Texto da resposta", texto=answer)
+        log.warning("Empty AI reply")
+    log.debug("Reply text", text=answer)
     return answer
