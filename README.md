@@ -4,6 +4,8 @@ Atendente virtual para o **WhatsApp Web** com IA. O app abre o WhatsApp no naveg
 
 Funciona com qualquer API compatível com o padrão da OpenAI (Chat Completions): **OpenRouter**, **OpenAI**, **Groq**, **Ollama** (local), **LM Studio** e outras. Para trocar de provedor, basta mudar o `.env`.
 
+https://github.com/user-attachments/assets/6828e377-2013-4b51-97e8-50ebd679c07f
+
 ## Como funciona
 
 1. Abre o WhatsApp Web num navegador controlado pelo [nodriver](https://github.com/ultrafunkamsterdam/nodriver). O login (QR code) fica salvo para as próximas execuções.
